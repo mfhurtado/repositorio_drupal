@@ -1,0 +1,4 @@
+name = Ejemplo user_acc
+description = "modulo que me permite probar el user acces"
+package = Aprendiendo a programar con Drupal
+core = 7.x

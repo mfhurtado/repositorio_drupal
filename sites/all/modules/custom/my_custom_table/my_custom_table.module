@@ -1,0 +1,290 @@
+<?php
+
+/**
+* @file
+* Custom functions for this site.
+*/
+
+/**
+* Implements hook_menu().
+*/
+function my_custom_table_menu(){
+   $items['admin/custom/my_custom_table/add'] = array(
+  'title' => 'My Custom Table',
+  'description' => 'View My Custom Table.',
+  'page callback' => 'my_custom_table_block_view',
+  'access arguments' => array('access my_custom_table'),
+  'weight' => -14,
+  );
+
+  $items['admin/custom/my_custom_table/%/edit'] = array(
+  'title' => 'My Custom Table',
+  'description' => 'View My Custom Table.',
+  'page callback' => 'my_custom_table_edit_block_view',
+  'page argument' => array(3),
+  'access arguments' => array('access my_custom_table'),
+  'weight' => -14,
+  );
+
+  $items['admin/custom/my_custom_table/%/delete'] = array(
+  'title' => 'My Custom Table',
+  'description' => 'View My Custom Table.',
+  'page callback' => 'my_custom_delete',
+  'page argument' => array(3),
+  'access arguments' => array('access my_custom_table'),
+  'weight' => -14,
+  );
+
+  $items['admin/custom/my_custom_table'] = array(
+  'title' => 'My Custom Table',
+  'description' => 'View My Custom Table.',
+  'page callback' => 'my_custom_table_sort_with_pager_content',
+  'access arguments' => array('access my_custom_table'),
+  'weight' => -14,
+  );
+return $items;
+}
+
+/**
+* Implements hook_block_view().
+*/
+function my_custom_table_block_view($block_name = ''){
+  // in my example I show the form only in the front page.
+  // You can show it where you want, obviously
+  if (drupal_is_front_page()){
+    return NULL;
+  }
+  $form = drupal_get_form('my_custom_table_form');
+  $block = array(
+  'content' => $form,
+  );
+return $block;
+}
+
+/**
+* Implements form
+*/
+
+function my_custom_table_form($form, &$form_state){
+  // now I add a text field to the form
+  $form['my_custom_table_title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Title'),
+    '#description' => t('The Title of the My Custom Table.'),
+    '#size' => 40,
+    '#maxlength' => 120,
+    '#required' => TRUE,
+    );
+    // Textarea for the body
+  $form['my_custom_table_description'] = array(
+    '#type' => 'textarea',
+    '#rows' => 10,
+    '#columns' => 40,
+    '#title' => t('Description'),
+    '#required' => TRUE,
+    '#description'=> t('The text of My Custom Table .'),
+    );
+    // Checkbox to indicate.
+  $form['my_custom_active'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Status'),
+    '#description' => t('Indicates whether the active or inactive.'),
+    );
+    // now I add also a button
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+    );
+// and now I assign a my function as handler of the submit event
+// $form['#validate'][] = ‘my_custom_table_submit_handler’;
+  $form['#submit'][] = 'my_custom_table_submit_handler';
+return $form;
+}
+
+function my_custom_table_submit_handler($form, &$form_state){
+  // this function will be executed after the click
+  // event of the user on the “submit” button.
+  // here I only print a message
+  // you can access a database, redirect, or whatever you want, obviously
+  $error = 1;
+  if ( !isset($form_state['values']['my_custom_table_title']) || !isset($form_state['values']['my_custom_table_title']) ) {
+    $error = 0 ;
+  }
+  if($error){
+    $my_custom_table_title = $form_state['values']['my_custom_table_title'];
+    $my_custom_table_description = $form_state['values']['my_custom_table_description'];
+    $nid = db_insert('custom_table') // Table name no longer needs {}
+    ->fields(array(
+    'title' => $my_custom_table_title,
+    'description' => $my_custom_table_description,
+    ))
+    ->execute();
+    drupal_set_message(t('Record has been added!'));
+  }
+}
+/**
+* Implements cunstom table.
+*/
+function my_custom_table_sort_with_pager_content(){
+  $header = array(
+    array('data' => t('Custom id'), 'field' => 'id', 'sort' => 'asc'),
+    array('data' => t('Title'), 'field' => 'title'),
+    array('data' => t('Status'), 'field' => 'status'),
+    array('data' => t('Action')),
+    );
+
+    $query = db_select('custom_table', 'c');
+    $query->fields('c', array('id', 'title', 'status'));
+    $table_sort = $query->extend('TableSort') // Add table sort extender.
+    ->orderByHeader($header); // Add order by headers.
+    $pager = $table_sort->extend('PagerDefault')
+    ->limit(5);
+    $result = $pager->execute();
+
+    $rows = array();
+    foreach($result as $res){
+      $rows[] = array($res->id, $res->title, $res->status, /*'<a href="my_custom_table/$res->id/edit">Edit</a> | <a href="my_custom_table/$res->id/delete" onclick="return confirm(\'Are you sure\')>Delete</a>'*/);
+}
+
+// If rows are not empty theme and display the rows.
+
+if (!empty($rows)) {
+$output = theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'sort-table')));
+$output = theme('pager');
+}
+else {
+$output = t('No results found.');
+}
+$output .= '<br /><a href="my_custom_table/add">Add new record</a>';
+return $output;
+}
+
+function my_custom_delete(){
+$id = arg(3);
+$num_updated = db_delete('custom_table')
+->condition('id', $id, '=')
+->execute();
+drupal_set_message(t('Record has been deleted!'));
+drupal_goto('admin/custom/my_custom_table/');
+}
+
+/**
+* Implements hook_block_view().
+*/
+function my_custom_table_edit_block_view($block_name = '')
+{
+
+// in my example I show the form only in the front page.
+// You can show it where you want, obviously
+if (drupal_is_front_page())
+{
+return NULL;
+}
+
+$form = drupal_get_form('my_custom_table_edit_form');
+$block = array
+(
+// ‘subject’ => t(‘Subject’),
+'content' => $form,
+);
+// $block['content'][] .= ‘<br /><a href=”add”>Back to Listing</a>’;
+return $block;
+}
+
+function my_custom_table_edit_form($form, &$form_state)
+{
+
+$id = arg(3);
+$result = db_query('SELECT * FROM {custom_table} WHERE id = :tid', array(':tid' => $id));
+$record = $result->fetchObject();
+
+// now I add a text field to the form
+// with a label and fixed dimensions (you never know…)
+$form['my_custom_table_title'] = array(
+'#type' => 'textfield',
+'#title' => t('Title'),
+'#value' => t($record->title),
+'#description' => t('The Title of the My Custom Table.'),
+'#size' => 40,
+'#maxlength' => 120,
+'#required' => TRUE,
+);
+
+// Textarea for the body
+$form['my_custom_table_description'] = array(
+'#type' => 'textarea',
+'#rows' => 10,
+'#columns' => 40,
+'#title' => t('Description'),
+'#value' => t($record->description),
+'#required' => TRUE,
+'#description'=> t('The text of My Custom Table .'),
+);
+// hidden for the body
+$form['id'] = array(
+'#type' => 'hidden',
+'#value' => t($id),
+);
+
+// Checkbox to indicate.
+$form['my_custom_active'] = array(
+'#type' => 'checkbox',
+'#title' => t('Status'),
+'#description' => t('Indicates whether the active or inactive.'),
+);
+// now I add also a button
+$form['submit'] = array
+(
+'#type' => 'submit',
+'#value' => t('Save'),
+);
+// and now I assign a my function as handler of the submit event
+// $form['#validate'][] = ‘my_custom_table_submit_handler’;
+$form['#submit'][] = 'my_custom_table_edit_submit_handler';
+return $form;
+}
+
+function my_custom_table_edit_submit_handler($form, &$form_state)
+{
+// this function will be executed after the click
+// event of the user on the “submit” button.
+// here I only print a message
+// you can access a database, redirect, or whatever you want, obviously
+$error = 1;
+if ( !isset($form_state['values']['my_custom_table_title']) || !isset($form_state['values']['my_custom_table_title']) ) {
+$error = 0 ;
+}
+
+if($error){
+$id = $form_state['values']['id'];
+//var_dump($form_state);
+$my_custom_table_title = $form_state['input']['my_custom_table_title'];
+$my_custom_table_description = $form_state['input']['my_custom_table_description'];
+$data = array(
+'title' => $my_custom_table_title,
+'description' => $my_custom_table_description,
+);
+$num_updated = db_update('custom_table')
+->fields($data)
+->condition('id', $id, '=')
+->execute();
+drupal_set_message(t('Record has been Updated!'));
+}
+}
+
+/**
+* Implements hook_permission().
+*/
+function my_custom_table_permission() {
+return array(
+'access my_custom_table' => array(
+'title' => t('View My Custom Table'),
+// Note: We translate the ‘Administer blocks’ permission string here with
+// a separate t() call, to make sure it gets the same translation as when
+// it’s in block_permission().
+'description' => t('Customizing the My Custom Table requires the !permission-name permission.', array(
+'!permission-name' => l(t('Administer blocks'), 'admin/people/permissions', array('fragment' => 'module-block')),
+)),
+),
+);
+}

@@ -1,0 +1,4 @@
+name = Ejemplo Hook_permision
+description = "modulo que me permite probar el hook_permision"
+package = Aprendiendo a programar con Drupal
+core = 7.x

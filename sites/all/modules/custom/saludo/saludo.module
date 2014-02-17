@@ -1,0 +1,49 @@
+<?php
+/**
+ * archivo en php me permite usar el modulo saludar
+ */
+
+/**
+ * Implementa hook_menu().
+ */
+
+function saludo_menu() {
+  $items['abc/def/%/%'] = array(
+    'title' => 'modulo_saludo',
+    'page callback' => 'modulo_saludo_abc_def',
+    'page arguments' => array(2,3,'jhjhj'),
+    //'access callback' => 'saludo_access1',
+    'access arguments' => array('administer permision'),
+   );
+  return $items;
+}
+
+//funcion que realiza las operaciones +,-,*,/
+//recibe los valores de la funcion saludo_access1
+function modulo_saludo_abc_def($a, $b, $operation) {
+   $suma = $a + $b;
+   $resta = $a - $b;
+   $divi  = $a/$b;
+   $multi = $a * $b;
+
+   drupal_set_message(t('La suma es = @suma',array('@suma' => $suma)));
+   drupal_set_message(t('La resata es = @resta',array('@resta' => $resta)));
+   drupal_set_message(t('La multiplicacio es = @multi',array('@multi' => $multi)));
+   drupal_set_message(t('La division es = @divi',array('@divi' => $divi))); 
+
+  return "Holaaaaassssss"; 
+  	 
+}
+
+//funcion que me permite el acceso al formulario y 
+//retorna el valor de uid1 y uid2
+function saludo_access1($uid2) {
+  if ($uid2 != 0) {
+   	return TRUE;  
+  }
+  else {
+  	drupal_set_message(t('el denominador debe ser diferente de cero'), 'status', FALSE);
+  	return FALSE;
+  }
+}
+

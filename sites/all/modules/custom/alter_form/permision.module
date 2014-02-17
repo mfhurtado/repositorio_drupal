@@ -1,0 +1,21 @@
+
+
+<?php
+
+
+/**
+ * Implementa hook_permission().
+ */
+function permision_permission() {
+  return array(
+    'administer permision' => array(
+      'title' => t('Administer modulo permision'),
+      'description' => t('Perform administration tasks for module permision.'),
+    ),
+  );
+}
+function demo_node_view($node, $view_mode, $langcode) {
+  if(user_access('administer permision')) {
+    drupal_set_message('Test');
+  }
+}

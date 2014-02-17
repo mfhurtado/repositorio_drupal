@@ -1,0 +1,25 @@
+<?php
+/**
+ * archivo en php me permite usar el modulo saludar con user_acces
+ */
+
+/**
+ * Implementa hook_menu().
+ */
+
+function user_acc_menu() {
+  $items['user/%user_uid_optional/content']= array(
+    'title' => 'modulo_saludo_user_acc',
+    'page callback' => 'salud', 
+    'access callback' => 'user_acc',
+    'access arguments' => array('administer content', 1),
+    'type' => MENU_LOCAL_TASK,
+);
+
+}
+
+function salud(){
+	return "saludarrrrrrr";
+}
+
+

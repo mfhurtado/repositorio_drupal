@@ -1,0 +1,53 @@
+<?php
+
+/**
+* @file
+* Schema definitions install/update/uninstall hooks.
+*/
+
+/**
+* Implements hook_schema().
+*/
+function my_custom_table_schema() {
+$schema['custom_table'] = array(
+
+// Example (partial) specification for table “custom_table”.
+'description' => 'The base table for custom_table.',
+'fields' => array(
+'id' => array(
+'description' => 'The primary identifier for a custom_table.',
+'type' => 'serial',
+'unsigned' => TRUE,
+'not null' => TRUE,
+),
+'title' => array(
+'description' => 'The title of this custom_table, always treated as non-markup plain text.',
+'type' => 'varchar',
+'length' => 255,
+'not null' => TRUE,
+'default' => '',
+),
+'description' => array(
+'description' => 'The description of this custom_table, always treated as non-markup plain text.',
+'type' => 'text',
+),
+'status' => array(
+'description' => 'The status for a custom_table.',
+'type' => 'int',
+'unsigned' => TRUE,
+'not null' => TRUE,
+'default' => '1',
+),
+),
+'primary key' => array('id'),
+);
+return $schema;
+}
+
+/**
+* Add the custom_table table for the my_custom_table module.
+*/
+function my_custom_table_update_7001() {
+db_create_table('custom_table', drupal_get_schema_unprocessed('my_custom_table', 'custom_table'));
+return 'Add the custom_table table for the my_custom_table module.';
+}

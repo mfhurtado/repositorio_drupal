@@ -1,0 +1,23 @@
+<?php
+/**
+* Implements hook_help().
+*/
+
+/**
+* Implements hook_perm().
+*/
+function feedback_perm ()
+{
+  return array ('send message', 'view messages');
+}
+
+
+/** Devuelve el número de feeds creados en la última semana
+*/
+function _feedback_count ()
+{
+  $query = "SELECT count(id) as total from {feedback_messages} where datediff( now(), indate ) < 7";
+  $queryResult =  db_query ( $query );
+  $result = db_fetch_object ( $queryResult ) ;
+  return $result->total;
+}

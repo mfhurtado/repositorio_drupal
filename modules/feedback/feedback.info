@@ -1,0 +1,4 @@
+name = feedback
+description = "Módulo que dice hola mundo"
+package = Aprendiendo a programar con Drupal
+core = 7.x
