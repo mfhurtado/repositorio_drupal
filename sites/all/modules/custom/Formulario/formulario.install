@@ -1,8 +1,9 @@
 <?php
 /**
- * Implementa el hook_schema.
+ * @file
+ * Install, update, and uninstall functions for the Formulario crud WW module.
  */
-function formulario_schema(){
+function formulario_schema() {
   $schema['crud_deptoscol'] = array(
     'description' => t('Contiene los departamentos de Colombia'),
     'fields' => array(
@@ -15,7 +16,7 @@ function formulario_schema(){
         'type' => 'varchar',
         'length' => 60,
         'not null' => TRUE,
-        'default' =>'',
+        'default' => '',
         ),
       'cap_depto' => array(
         'type' => 'varchar',
@@ -41,47 +42,47 @@ function formulario_schema(){
 /**
  * actualizacioon de crud_deptos agrgar campo poblacion
  */
-function formulario_update_7000(){
-db_add_field('crud_deptoscol','poblacion', array('type' => 'int','unsigned' => TRUE,'not null' => TRUE,));
+function formulario_update_7000() {
+db_add_field('crud_deptoscol', 'poblacion', array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, ));
 //db_add_field($crud_deptoscol, $poblacion, $spec, $keys_new = array())
 }
 /**
  * actualizacioon cambio de nombre name_depto por depto_name
  */
-function formulario_update_7001(){
+function formulario_update_7001() {
   $schema = drupal_get_schema('crud_deptoscol', TRUE);
-  db_change_field('crud_deptoscol', 'name_depto','depto_name', $schema['fields']['depto_name']);
+  db_change_field('crud_deptoscol', 'name_depto', 'depto_name', $schema['fields']['depto_name']);
 }
 /**
  * crea tabla temporal_crud
  */
-function formulario_update_7002(){
+function formulario_update_7002() {
   $schema = drupal_get_schema('temporal_crud', TRUE);
-  db_create_table('temporal_crud',$schema);
+  db_create_table('temporal_crud', $schema);
 }
 /**
  * borra tabla temporal_crud
  */
- function formulario_update_7003(){
+ function formulario_update_7003() {
   db_drop_table('temporal_crud');
 }
 /**
  * Insertar un elemnto a la tabla crud_deptoscol
  */
-function formulario_update_7007(){
+function formulario_update_7007() {
    $nid = db_insert('crud_deptoscol')
    ->fields(array(
    'id_depto' => '1',
    'depto_name' => 'Antioquia',
    'cap_depto' => 'Medellin',
-   'poblaion' =>'120',
+   'poblaion' => '120',
    ));
 }
 /**
  * Actualizacioon de crud_deptos agrgar campo uid
  */
-function formulario_update_7008(){
-db_add_field('crud_deptoscol','uid2', array('type' => 'int','unsigned' => TRUE,'not null' => TRUE,));
+function formulario_update_7008() {
+db_add_field('crud_deptoscol', 'uid2', array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, ));
 }
 
 

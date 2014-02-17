@@ -1,77 +1,78 @@
 <?php
 /**
- * Implementa un formulario CRUD Departamentos de Colombia.
+ * @file
+ * The theme system, which controls the output of Drupal.
+ *
+ * The theme system allows for nearly all output of the Drupal system to be
+ * customized by user themes.
  */
-function formulario_menu(){
-	$items['formulario/add'] = array(
-		'title' => 'Departamentos de Colombia',
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('formulario_nameform'),
-		'access callback' => TRUE,
-		'type' => MENU_DEFAULT_LOCAL_TASK
-		);
+function formulario_menu() {
+  $items['formulario/add'] = array(
+    'title' => 'Departamentos de Colombia',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('formulario_nameform'),
+    'access callback' => TRUE,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
   $items['tablepage'] = array(
-    'title' => t('Consulta Departamentos de Colombia'),
-    'page callback' => 'mytable_table_data',
-    'access arguments' => array("access content"),
-    'type' => MENU_LOCAL_TASK
-    );
-    $items['tablepage2'] = array(
-    'title' => t('Consulta Departamentos de Colombia'),
+    'title' => 'Consulta Departamentos de Colombia',
+    'page callback' => 'mytable_table_data', 'access arguments' => array("access content"),
+    'type' => MENU_LOCAL_TASK,
+  );
+  $items['tablepage2'] = array('title' => 'Consulta Departamentos de Colombia',
     'page callback' => 'image_table_data',
     'access arguments' => array("access content"),
-    'type' => MENU_LOCAL_TASK
-    );
+    'type' => MENU_LOCAL_TASK,
+  );
   $items['formulario/edit/%'] = array(
     'title' => 'Departamentos de Colombia',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('formulario_edit_nameform', 2),
-    'access arguments' => array(2),
-    'access callback' => 'access_permiso',
-    'type' => MENU_LOCAL_TASK
-    );
+    'access arguments' => array(2), 'access callback' => 'access_permiso',
+    'type' => MENU_LOCAL_TASK,
+  );
   $items['formulario/ver/%'] = array(
     'title' => 'Departamentos de Colombia',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('formulario_ver_nameform', 2),
     'access arguments' => array(2),
     'access callback' => 'access_permiso',
-    'type' => MENU_CALLBACK
-    );
+    'type' => MENU_CALLBACK,
+  );
   $items['formulario/delete/%'] = array(
     'title' => 'Departamentos de Colombia',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('formulario_delete_nameform', 2),
     'access callback' => TRUE,
-    'type' => MENU_LOCAL_TASK
-    );
+    'type' => MENU_LOCAL_TASK,
+  );
   $items['formulario/deletem'] = array(
     'title' => 'Departamentos de Colombia',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('formulario_deletemessage_nameform'),
     'access callback' => TRUE,
     'type' => MENU_CALLBACK
-    );
+   );
   $items['formulario/consulta'] = array(
-    'title' => t('Consulta Departamentos de Colombia'),
+    'title' => 'Consulta Departamentos de Colombia',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('mytable_table_consulta_data'),
     'access arguments' => array("access content"),
     'type' => MENU_CALLBACK
-    );
+   );
   $items['test'] = array(
-    'title' => t('Consulta Departamentos de Colombia'),
+    'title' => 'Consulta Departamentos de Colombia',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('testform'),
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
-  return $items;  
+  return $items;
 }
 /**
  * Implementa la tabla que muestra los registros
  */
-function mytable_table_data(){
+function mytable_table_data() {
   $output = '';
   $header = array(
     array('data' => 'Codigo', 'field' => 'id_depto'),
@@ -83,14 +84,13 @@ function mytable_table_data(){
     array('data' => 'Ver', 'field' => t('Ver')),
     'thumbnail',
     );
-
-  if(isset($_GET['sort']) && isset($_GET['order'])){
-    if($_GET['sort'] == 'asc')
-      $sort = 'ASC';
-    else
+    if (isset($_GET['sort']) && isset($_GET['order'])) {
+      if ($_GET['sort'] == 'asc')
+        $sort = 'ASC';
+      else
       $sort = 'DESC';
 
-    switch($_GET['order']){
+    switch ($_GET['order']) {
       case 'id_depto':
       $order = 'id_depto';
       break;
@@ -105,76 +105,76 @@ function mytable_table_data(){
       break;
       default:
       $order = 'id_depto';
-      }      
+      }
    }
-  else{
+  else {
     $sort = 'ASC';
     $order = 'id_depto';
   }
 
   $query = db_select("crud_deptoscol", "n");
-  $query->fields('n',array('id_depto','depto_name','cap_depto','poblacion'));
+  $query->fields('n', array('id_depto', 'depto_name', 'cap_depto', 'poblacion'));
   $query->orderBy($order, $sort);
   $query->join('file_managed', 'f', 'f.fid = n.uid2');
   $query = $query->extend('TableSort')->extend('PagerDefault')->limit(2);
   $result = $query->fields('f', array('uri'))->execute();
   $rows=array();
-  while($data = $result->fetchObject()){
+  while ($data = $result->fetchObject()) {
     dpm($data);
     $rows[] = array($data->id_depto, $data->depto_name, $data->cap_depto, $data->poblacion,
       theme('image', array('path' => $data->uri, 'height' => 200)),
-      l('Editar', 'formulario/edit/' . $data->id_depto), l('Delete','formulario/deletem/' .$data->id_depto),
-      l('Ver','formulario/ver/' .$data->id_depto));
+      l(t('Editar'), 'formulario/edit/' . $data->id_depto), l(t('Delete'), 'formulario/deletem/' . $data->id_depto),
+      l(t('Ver'), 'formulario/ver/' . $data->id_depto));
     }
     $output = theme_table(
     array(
       'header' => $header,
       'rows' => $rows,
       'attributes' => array(),
-      'sticky' => true,
+      'sticky' => TRUE,
       'caption' => '',
       'colgroups' => array(),
       'empty' => t("La tabla no tiene ninguna fila")
       )
-    ).theme('pager');
+    ) . theme('pager');
   return $output;
 }
 /**
 *  Definimos un formulario para agragar archivos
 */
-function formulario_nameform(){
-	$form['name'] = array(
-		'#title' => t('Departamentos de Colombia'),
-		'#type' => 'fieldset',
-		'#description' => t('Los campos con * son obligatorios'),
-		);
-	$form['name']['id_depto'] = array(
-		'#title' => t('Codigo Departamento'),
-		'#type' => 'textfield',
-		'#element_validate' => array(t('_element_validate_number')),
-		'#description' => t('Ingrese codigo'),
-		'#required' => TRUE,
-		);
-	$form['name']['depto_name'] = array(
-		'#title' => t('Nombre Departamento'),
-		'#type' => 'textfield',
+function formulario_nameform() {
+  $form['name'] = array(
+    '#title' => t('Departamentos de Colombia'),
+    '#type' => 'fieldset',
+    '#description' => t('Los campos con * son obligatorios'),
+  );
+  $form['name']['id_depto'] = array(
+    '#title' => 'Codigo Departamento',
+    '#type' => 'textfield',
+    '#element_validate' => array(t('_element_validate_number')),
+    '#description' => t('Ingrese codigo'),
+    '#required' => TRUE,
+  );
+  $form['name']['depto_name'] = array(
+    '#title' => 'Nombre Departamento',
+    '#type' => 'textfield',
     '#empty_option' => 'mi mensaje',
-		'#description' => t('Departamento'),
-		'#required' => TRUE,
-		);
-	$form['name']['name_cap'] = array(
-		'#title' => t('Capital'),
-		'#type' => 'textfield',
-		'#description' => t('Capital'),
-		'#required' => TRUE,
-		);	
-	$form['name']['poblacion'] = array(
-		'#title' => t('poblacion'),
-		'#type' => 'textfield',
-		'#element_validate' => array('_element_validate_number'),
-		'#description' => t('poblacion'),
-		'#required' => TRUE,
-		);	
+    '#description' => t('Departamento'),
+    '#required' => TRUE,
+  );
+  $form['name']['name_cap'] = array(
+    '#title' => 'Capital',
+    '#type' => 'textfield',
+    '#description' => t('Capital'),
+    '#required' => TRUE,
+  );
+  $form['name']['poblacion'] = array(
+    '#title' => 'Poblacion',
+    '#type' => 'textfield',
+    '#element_validate' => array('_element_validate_number'),
+    '#description' => t('poblacion'),
+    '#required' => TRUE,
+  );
   $form['name']['file'] = array(
     '#type' => 'managed_file',
     '#title' => t('Image'),
@@ -185,20 +185,20 @@ function formulario_nameform(){
     ),
     '#required' => TRUE,
     );
-	$form['submit'] = array(
-		'#type' => 'submit',
-		'#value' => t('Guardar'),
-		);
- 	return $form;
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Guardar'),
+  );
+  return $form;
 }
 /**
 *  Definimos el submit del formulario
 */
-function formulario_nameform_submit($form, &$form_state){
+function formulario_nameform_submit($form, &$form_state) {
   $id = $form_state['values']['id_depto'];
-	$depto = $form_state['values']['depto_name'];
-	$capital = $form_state['values']['name_cap'];
-	$pobla = $form_state['values']['poblacion'];
+  $depto = $form_state['values']['depto_name'];
+  $capital = $form_state['values']['name_cap'];
+  $pobla = $form_state['values']['poblacion'];
   $uid2 = $form_state['values']['file'];
   /**
   *  Guardamos la imagen con status
@@ -207,12 +207,12 @@ function formulario_nameform_submit($form, &$form_state){
   $retor = file_load($uid2);
   $retor->status = FILE_STATUS_PERMANENT;
   file_save($retor);
- 	drupal_set_message(t('formulario diligenciado, %id, %depto, %capital, %poblacion',
-	array('%id' => $id, '%depto' => $depto, '%capital' => $capital, '%poblacion' => $pobla, '%uid2' => $uid2)));
+  drupal_set_message(t('formulario diligenciado, %id, %depto, %capital, %poblacion',
+    array('%id' => $id, '%depto' => $depto, '%capital' => $capital, '%poblacion' => $pobla, '%uid2' => $uid2)));
   /**
   * Inserat los datos en la DB.
   */
-  $nid = db_insert('crud_deptoscol') 
+  $nid = db_insert('crud_deptoscol')
   ->fields(array(
   'id_depto' => $id,
   'depto_name' => $depto,
@@ -226,67 +226,67 @@ function formulario_nameform_submit($form, &$form_state){
 /**
  * Validate Departamento exist.
  */
-function formulario_nameform_validate($form, &$form_state){
+function formulario_nameform_validate($form, &$form_state) {
   $result = db_select('crud_deptoscol', 'c')
   ->fields('c', array('depto_name'))
-  ->condition('depto_name', $form_state['values']['depto_name'],'=')
+  ->condition('depto_name', $form_state['values']['depto_name'], '=')
   ->execute()
   ->fetchAssoc();
-  if(($result['depto_name']) == ($form_state['values']['depto_name'])){
+  if (($result['depto_name']) == ($form_state['values']['depto_name'])) {
     form_set_error('depto_name', t('El Departamento ya esta registrado'));
   }
 }
 /**
  * formulario para editar.
  */
-function formulario_edit_nameform($form, &$form_state, $id_depto){
+function formulario_edit_nameform($form, &$form_state, $id_depto) {
   dpm($id_depto, 'id');
 
-  $query = db_select('crud_deptoscol', 'n') 
-  ->fields('n', array('id_depto', 'depto_name', 'cap_depto', 'poblacion')) 
-  ->condition('id_depto', $id_depto,'=')
-  ->execute() 
+  $query = db_select('crud_deptoscol', 'n')
+  ->fields('n', array('id_depto', 'depto_name', 'cap_depto', 'poblacion'))
+  ->condition('id_depto', $id_depto, '=')
+  ->execute()
   ->fetchObject();
 
-  if($query == ''){
+  if ($query == '') {
     form_set_error('depto_name', t('El registro no existe'));
   }
   else{
     $form['name'] = array(
-    '#title' => t('Departamentos de Colombia'),
-    '#type' => 'fieldset',
-    '#description' => t('Los campos con * son obligatorios'),
+      '#title' => t('Departamentos de Colombia'),
+      '#type' => 'fieldset',
+      '#description' => t('Los campos con * son obligatorios'),
     );
-  $form['name']['id_depto'] = array(
-    '#type' => 'value',
-    '#value' => $query->id_depto,
-    '#default_value' => $query->id_depto,
+    $form['name']['id_depto'] = array(
+      '#type' => 'value',
+      '#value' => $query->id_depto,
+      '#default_value' => $query->id_depto,
     );
-  $form['name']['depto_name'] = array(
-    '#title' => t('Nombre Departamento'),
-    '#type' => 'textfield',
-    '#default_value' => $query->depto_name,
-    '#description' => t('Ingrese su Apellido'),
-    '#required' => TRUE,
+    $form['name']['depto_name'] = array(
+      '#title' => t('Nombre Departamento'),
+      '#type' => 'textfield',
+      '#default_value' => $query->depto_name,
+      '#description' => t('Ingrese su Apellido'),
+      '#required' => TRUE,
     );
-  $form['name']['name_cap'] = array(
-    '#title' => t('Capital'),
-    '#type' => 'textfield',
-    '#default_value' => $query->cap_depto,
-    '#description' => t('Capital'),
-    '#required' => TRUE,
-    );  
-  $form['name']['poblacion'] = array(
-    '#title' => t('poblacion'),
-    '#type' => 'textfield',
-    '#default_value' => $query->poblacion,
-    '#element_validate' => array('_element_validate_number'),
-    '#description' => t('poblacion'),
-    '#required' => TRUE,
-    );  
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Guardar'),
+    $form['name']['name_cap'] = array(
+      '#title' => t('Capital'),
+      '#type' => 'textfield',
+      '#default_value' => $query->cap_depto,
+      '#description' => t('Capital'),
+      '#required' => TRUE,
+    );
+    $form['name']['poblacion'] = array(
+      '#title' => t('poblacion'),
+      '#type' => 'textfield',
+      '#default_value' => $query->poblacion,
+      '#element_validate' => array('_element_validate_number'),
+      '#description' => t('poblacion'),
+      '#required' => TRUE,
+    );
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Guardar'),
     );
   }
   return $form;
@@ -294,7 +294,7 @@ function formulario_edit_nameform($form, &$form_state, $id_depto){
 /**
  * submit edit form.
  */
-function formulario_edit_nameform_submit($form, &$form_state){
+function formulario_edit_nameform_submit($form, &$form_state) {
   $id = $form_state['values']['id_depto'];
   $depto = $form_state['values']['depto_name'];
   $capital = $form_state['values']['name_cap'];
@@ -318,7 +318,7 @@ function formulario_edit_nameform_submit($form, &$form_state){
 /**
  * formulario mensaje confirmasion eliminar.
  */
-function formulario_deletemessage_nameform($form, &$form_state, $id_depto){
+function formulario_deletemessage_nameform($form, &$form_state, $id_depto) {
   $form['name'] = array(
     '#title' => t('Departamentos de Colombia'),
     '#type' => 'fieldset',
@@ -342,35 +342,35 @@ function formulario_deletemessage_nameform($form, &$form_state, $id_depto){
 /**
  * Funciones que redirecionan.
  */
-function cancelar_del($form, &$form_state){
+function cancelar_del($form, &$form_state) {
   $form_state['redirect'] = 'tablepage';
 }
-function insertar_imagen($form, &$form_state){
+function insertar_imagen($form, &$form_state) {
   $form_state['redirect'] = 'test';
 }
 /**
  * formulario submit eliminar.
  */
-function formulario_deletemessage_nameform_submit($form, &$form_state){
+function formulario_deletemessage_nameform_submit($form, &$form_state) {
   $id_depto = $form_state['values']['oculto'];
-  dpm($id_depto,'id');
+  dpm($id_depto, 'id');
   $del_updated = db_delete('crud_deptoscol')
   ->condition('id_depto', $id_depto, '=')
   ->execute();
   drupal_set_message(t('Registro Borrado!'));
-  $form_state['redirect'] = 'tablepage'; 
+  $form_state['redirect'] = 'tablepage';
 }
 /**
  * formulario valida si el registro existe.
  */
-function access_permiso($id_depto){
-  $query = db_select('crud_deptoscol', 'n') 
-  ->fields('n', array('id_depto', 'depto_name', 'cap_depto', 'poblacion')) 
-  ->condition('id_depto', $id_depto,'=')
-  ->execute() 
+function access_permiso($id_depto) {
+  $query = db_select('crud_deptoscol', 'n')
+  ->fields('n', array('id_depto', 'depto_name', 'cap_depto', 'poblacion'))
+  ->condition('id_depto', $id_depto, '=')
+  ->execute()
   ->fetchObject();
 
-  if ($query != ''){
+  if ($query != '') {
     return TRUE;
     }
   else {
@@ -379,9 +379,9 @@ function access_permiso($id_depto){
   }
 }
 /**
- * Formulario Buscar 
+ * Formulario Buscar
  */
-function mytable_table_consultaform_data($form, &$form_state){
+function mytable_table_consultaform_data($form, &$form_state) {
   $form['name'] = array(
     '#title' => t('Departamentos de Colombia'),
     '#type' => 'fieldset',
@@ -396,11 +396,11 @@ function mytable_table_consultaform_data($form, &$form_state){
     '#value' => t('Buscar'),
     );
   return $form;
-} 
+}
 /**
  * Buscar Formulario
  */
-function mytable_table_consulta_data($form, &$form_state){
+function mytable_table_consulta_data($form, &$form_state) {
   $output = '';
   $header = array(
     array('data' => 'Codigo', 'field' => 'id_depto'),
@@ -411,13 +411,13 @@ function mytable_table_consulta_data($form, &$form_state){
     array('data' => 'Borrar', 'field' => t('Delete')),
     );
 
-  if(isset($_GET['sort']) && isset($_GET['order'])){
-    if($_GET['sort'] == 'asc')
+  if (isset($_GET['sort']) && isset($_GET['order'])) {
+    if ($_GET['sort'] == 'asc')
       $sort = 'ASC';
     else
       $sort = 'DESC';
 
-    switch($_GET['order']){
+    switch ($_GET['order']) {
       case 'id_depto':
       $order = 'id_depto';
       break;
@@ -432,7 +432,7 @@ function mytable_table_consulta_data($form, &$form_state){
       break;
       default:
       $order = 'id_depto';
-      }      
+      }
   }
   else {
     $sort = 'ASC';
@@ -440,105 +440,105 @@ function mytable_table_consulta_data($form, &$form_state){
   }
 
   $query = db_select("crud_deptoscol", "n");
-  $query->fields('n',array('id_depto','depto_name','cap_depto','poblacion'));
+  $query->fields('n', array('id_depto', 'depto_name', 'cap_depto', 'poblacion'));
   $query->orderBy($order, $sort);
- 
+
   $query = $query->extend('TableSort')->extend('PagerDefault')->limit(2);
   $result = $query->execute();
   $rows=array();
-  while($data = $result->fetchObject()){
-    $rows[] = array($data->id_depto, $data->depto_name, $data->cap_depto, $data->poblacion,l('Editar', 'formulario/edit/' . $data->id_depto), l('Delete','formulario/deletem/' .$data->id_depto));
+  while ($data = $result->fetchObject()) {
+    $rows[] = array($data->id_depto, $data->depto_name, $data->cap_depto, $data->poblacion, l(t('Editar'), 'formulario/edit/' . $data->id_depto), l(t('Delete'), 'formulario/deletem/' . $data->id_depto));
     }
   $output = theme_table(
     array(
       'header' => $header,
       'rows' => $rows,
       'attributes' => array(),
-      'sticky' => true,
+      'sticky' => TRUE,
       'caption' => '',
       'colgroups' => array(),
-      'empty' => t("La tabla no tiene ninguna fila") 
+      'empty' => t("La tabla no tiene ninguna fila")
     )
-  ).theme('pager');
+  ) . theme('pager');
 
   $cadena['contenido'] = array(
-    'dto1'=> mytable_table_consultaform_data($form, $form_state),
-    'dto2'=> array('#markup'=>$output,),    
-    );
+    'dto1' => mytable_table_consultaform_data($form, $form_state),
+    'dto2' => array('#markup' => $output, ),
+  );
   return $cadena;
 }
 /**
  * Load Image
  */
-function formulario_ver_nameform($form, &$form_state, $id_depto){
+function formulario_ver_nameform($form, &$form_state, $id_depto) {
   dpm($id_depto, 'id');
-  $query = db_select('crud_deptoscol', 'n') 
-  ->fields('n', array('id_depto', 'depto_name', 'cap_depto', 'poblacion', 'uid2')) 
-  ->condition('id_depto', $id_depto,'=')
-  ->execute() 
+  $query = db_select('crud_deptoscol', 'n')
+  ->fields('n', array('id_depto', 'depto_name', 'cap_depto', 'poblacion', 'uid2'))
+  ->condition('id_depto', $id_depto, '=')
+  ->execute()
   ->fetchObject();
 
   $file_image = file_load($query->uid2);
   $imagen = theme('image', array('path' => $file_image->uri, 'height' => 200));
-  if($query == ''){
+  if ($query == '') {
     form_set_error('depto_name', t('El registro no existe'));
-    }
-  else{
+  }
+  else {
     $form['picture'] = array(
       '#title' => t('Departamentos de Colombia'),
       '#markup' =>  $imagen ,
-      );
-   $form['name']['picture2'] = array(
+    );
+    $form['name']['picture2'] = array(
       '#title' => t('Codigo Departamento'),
       '#type' => 'textfield',
       '#default_value' => $query->uid2,
       '#disabled' => TRUE,
-      '#size' => 10, 
-      );
+      '#size' => 10,
+    );
     $form['name'] = array(
       '#title' => t('Departamentos de Colombia'),
       '#type' => 'fieldset',
-      );
+    );
     $form['name']['id_depto'] = array(
       '#title' => t('Codigo Departamento'),
       '#type' => 'textfield',
       '#default_value' => $query->id_depto,
       '#disabled' => TRUE,
       '#size' => 10,
-      );
+    );
     $form['name']['depto_name'] = array(
       '#title' => t('Nombre Departamento'),
       '#type' => 'textfield',
       '#default_value' => $query->depto_name,
-      '#disabled' => TRUE,    
+      '#disabled' => TRUE,
       '#size' => 30,
-      );
+    );
     $form['name']['name_cap'] = array(
-     '#title' => t('Capital'),
+      '#title' => t('Capital'),
       '#type' => 'textfield',
       '#disabled' => TRUE,
       '#default_value' => $query->cap_depto,
       '#size' => 30,
-      );  
+    );
     $form['name']['poblacion'] = array(
       '#title' => t('Poblacion'),
       '#type' => 'textfield',
       '#default_value' => $query->poblacion,
       '#disabled' => TRUE,
       '#size' => 30,
-      );    
+    );
     $form['name']['submit2'] = array(
       '#type' => 'submit',
       '#value' => t('Volver'),
       '#submit' => array('cancelar_del'),
-      );
-    }
+    );
+  }
   return $form;
 }
 /**
  * Load Image
  */
-function image_table_data(){
+function image_table_data() {
   $output = '';
   $header = array(
     array('data' => 'Codigo', 'field' => 'fid'),
@@ -552,12 +552,12 @@ function image_table_data(){
     array('data' => 'Ver', 'field' => t('Ver')),
     );
 
-  if(isset($_GET['sort']) && isset($_GET['order'])){
-    if($_GET['sort'] == 'asc')
+  if (isset($_GET['sort']) && isset($_GET['order'])) {
+    if ($_GET['sort'] == 'asc')
       $sort = 'ASC';
     else
       $sort = 'DESC';
-    switch($_GET['order']){
+    switch ($_GET['order']) {
       case 'fid':
       $order = 'fid';
       break;
@@ -581,7 +581,7 @@ function image_table_data(){
       break;
       default:
       $order = 'fid';
-      }      
+    }
   }
   else {
     $sort = 'ASC';
@@ -589,29 +589,29 @@ function image_table_data(){
   }
 
   $query = db_select("file_managed", "n");
-  $query->fields('n',array('fid','uid','filename','uri','filemime', 'filesize', 'status'));
+  $query->fields('n', array('fid', 'uid', 'filename', 'uri', 'filemime', 'filesize', 'status'));
   $query->orderBy($order, $sort);
   $query = $query->extend('TableSort')->extend('PagerDefault')->limit(10);
   $result = $query->execute();
   $rows=array();
-  while($data = $result->fetchObject()){
+  while ($data = $result->fetchObject()) {
     $rows[] = array($data->fid, $data->uid, $data->filename,
-      $data->uri, $data->filemime, $data->filesize, 
-      $data->status, 
+      $data->uri, $data->filemime, $data->filesize,
+      $data->status,
       theme('image_style', array('style_name' => '300x300', 'path' => $data->uri)),
-      l('Ver','formulario/ver/' .$data->fid));
+      l(t('Ver'), 'formulario/ver/' . $data->fid));
   }
   $output = theme_table(
     array(
       'header' => $header,
       'rows' => $rows,
       'attributes' => array(),
-      'sticky' => true,
+      'sticky' => TRUE,
       'caption' => '',
       'colgroups' => array(),
-      'empty' => t("La tabla no tiene ninguna fila") 
+      'empty' => t("La tabla no tiene ninguna fila")
     )
-  ).theme('pager');
- 
+  ) . theme('pager');
+
   return $output;
 }
