@@ -1,6 +1,6 @@
 <?php
 /**
- * @file
+ * @file.
  * Install, update, and uninstall functions for the Formulario crud WW module.
  */
 function formulario_schema() {
@@ -11,7 +11,7 @@ function formulario_schema() {
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-         ),
+        ),
       'depto_name' => array(
         'type' => 'varchar',
         'length' => 60,
@@ -63,20 +63,20 @@ function formulario_update_7002() {
 /**
  * borra tabla temporal_crud
  */
- function formulario_update_7003() {
+function formulario_update_7003() {
   db_drop_table('temporal_crud');
 }
 /**
  * Insertar un elemnto a la tabla crud_deptoscol
  */
 function formulario_update_7007() {
-   $nid = db_insert('crud_deptoscol')
-   ->fields(array(
+  $nid = db_insert('crud_deptoscol')
+  ->fields(array(
    'id_depto' => '1',
    'depto_name' => 'Antioquia',
    'cap_depto' => 'Medellin',
    'poblaion' => '120',
-   ));
+  ));
 }
 /**
  * Actualizacioon de crud_deptos agrgar campo uid

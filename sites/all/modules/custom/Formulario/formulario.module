@@ -1,10 +1,15 @@
 <?php
+
 /**
  * @file
- * The theme system, which controls the output of Drupal.
+ * Module file for formulario
+ */
+
+/**
+ * Implements hook_menu().
  *
- * The theme system allows for nearly all output of the Drupal system to be
- * customized by user themes.
+ * Provide a menu item and a page to demonstrate features of this example
+ * module.
  */
 function formulario_menu() {
   $items['formulario/add'] = array(
@@ -52,14 +57,14 @@ function formulario_menu() {
     'page arguments' => array('formulario_deletemessage_nameform'),
     'access callback' => TRUE,
     'type' => MENU_CALLBACK
-   );
+  );
   $items['formulario/consulta'] = array(
     'title' => 'Consulta Departamentos de Colombia',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('mytable_table_consulta_data'),
     'access arguments' => array("access content"),
     'type' => MENU_CALLBACK
-   );
+  );
   $items['test'] = array(
     'title' => 'Consulta Departamentos de Colombia',
     'page callback' => 'drupal_get_form',
@@ -69,8 +74,9 @@ function formulario_menu() {
   );
   return $items;
 }
+
 /**
- * Implementa la tabla que muestra los registros
+ * Implementa la tabla que muestra los registros.
  */
 function mytable_table_data() {
   $output = '';
@@ -106,7 +112,7 @@ function mytable_table_data() {
       default:
       $order = 'id_depto';
       }
-   }
+  }
   else {
     $sort = 'ASC';
     $order = 'id_depto';
@@ -139,9 +145,10 @@ function mytable_table_data() {
     ) . theme('pager');
   return $output;
 }
+
 /**
-*  Definimos un formulario para agragar archivos
-*/
+ *  Definimos un formulario para agragar archivos
+ */
 function formulario_nameform() {
   $form['name'] = array(
     '#title' => t('Departamentos de Colombia'),
@@ -192,15 +199,15 @@ function formulario_nameform() {
   return $form;
 }
 /**
-*  Definimos el submit del formulario
-*/
+ *  Definimos el submit del formulario
+ */
 function formulario_nameform_submit($form, &$form_state) {
   $id = $form_state['values']['id_depto'];
   $depto = $form_state['values']['depto_name'];
   $capital = $form_state['values']['name_cap'];
   $pobla = $form_state['values']['poblacion'];
   $uid2 = $form_state['values']['file'];
-  /**
+/**
   *  Guardamos la imagen con status
   */
   unset($form_state['values']['file']);
@@ -209,7 +216,7 @@ function formulario_nameform_submit($form, &$form_state) {
   file_save($retor);
   drupal_set_message(t('formulario diligenciado, %id, %depto, %capital, %poblacion',
     array('%id' => $id, '%depto' => $depto, '%capital' => $capital, '%poblacion' => $pobla, '%uid2' => $uid2)));
-  /**
+/**
   * Inserat los datos en la DB.
   */
   $nid = db_insert('crud_deptoscol')
@@ -224,8 +231,8 @@ function formulario_nameform_submit($form, &$form_state) {
   drupal_set_message(t('registro guradado!'));
 }
 /**
- * Validate Departamento exist.
- */
+  * Validate Departamento exist.
+  */
 function formulario_nameform_validate($form, &$form_state) {
   $result = db_select('crud_deptoscol', 'c')
   ->fields('c', array('depto_name'))
@@ -323,25 +330,25 @@ function formulario_deletemessage_nameform($form, &$form_state, $id_depto) {
     '#title' => t('Departamentos de Colombia'),
     '#type' => 'fieldset',
     '#description' => t('Esta seguro que desea continuar con la operacion'),
-    );
-   $form['name']['submit'] = array(
+  );
+  $form['name']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Eliminar'),
-    );
-   $form['name']['submit2'] = array(
+  );
+  $form['name']['submit2'] = array(
     '#type' => 'submit',
     '#value' => t('Cancelar'),
     '#submit' => array('cancelar_del'),
-    );
-   $form['name']['oculto'] = array(
+  );
+  $form['name']['oculto'] = array(
     '#type' => 'value',
     '#value' => $id_depto,
-    );
+  );
   return $form;
 }
 /**
- * Funciones que redirecionan.
- */
+  * Funciones que redirecionan.
+  */
 function cancelar_del($form, &$form_state) {
   $form_state['redirect'] = 'tablepage';
 }
