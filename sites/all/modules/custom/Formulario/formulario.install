@@ -1,8 +1,10 @@
 <?php
 /**
- * @file.
- * Install, update, and uninstall functions for the Formulario crud WW module.
- */
+  * @file
+  * One-line description/summary of what your module does goes here.
+  *
+  * A paragraph or two in broad strokes about your module and how it behaves.
+  */
 function formulario_schema() {
   $schema['crud_deptoscol'] = array(
     'description' => t('Contiene los departamentos de Colombia'),
@@ -77,12 +79,6 @@ function formulario_update_7007() {
    'cap_depto' => 'Medellin',
    'poblaion' => '120',
   ));
-}
-/**
- * Actualizacioon de crud_deptos agrgar campo uid
- */
-function formulario_update_7008() {
-db_add_field('crud_deptoscol', 'uid2', array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, ));
 }
 
 

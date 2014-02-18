@@ -76,6 +76,35 @@ function formulario_menu() {
 }
 
 /**
+  * Implementa hook_block_info.
+  */
+function formulario_block_info() {
+  $blocks['formulario_infoblock'] = array(
+    'info' => t('Formulario Informacion Bloque'),
+    'status' => TRUE,
+    'region' => 'sidebar_first',
+    'weight' => 0,
+    'visibility' => BLOCK_VISIBILITY_LISTED,
+    //'pages' => 'formulario/ver',
+  );
+return $blocks;
+}
+
+/**
+  * Implementa hook_block_view.
+  */
+function formulario_block_view($delta = '') {
+  $block = array();
+  dpm($delta);
+  switch ($delta) {
+    case 'formulario_infoblock':
+      $block['subject'] = '';
+      $block['content'] = formulario_imagen_nameform(variable_get('id_imagen', 2));
+      break;
+  }
+  return $block;
+}
+/**
  * Implementa la tabla que muestra los registros.
  */
 function mytable_table_data() {
@@ -475,9 +504,9 @@ function mytable_table_consulta_data($form, &$form_state) {
   return $cadena;
 }
 /**
- * Load Image
- */
-function formulario_ver_nameform($form, &$form_state, $id_depto) {
+  * Load Imagen en el formulario de consulta
+  */
+function formulario_imagen_nameform($id_depto) {
   dpm($id_depto, 'id');
   $query = db_select('crud_deptoscol', 'n')
   ->fields('n', array('id_depto', 'depto_name', 'cap_depto', 'poblacion', 'uid2'))
@@ -495,6 +524,31 @@ function formulario_ver_nameform($form, &$form_state, $id_depto) {
       '#title' => t('Departamentos de Colombia'),
       '#markup' =>  $imagen ,
     );
+  }
+  return $form;
+}
+/**
+ * Load Image
+ */
+function formulario_ver_nameform($form, &$form_state, $id_depto) {
+  variable_set('id_imagen', $id_depto);
+  dpm($id_depto, 'id');
+  $query = db_select('crud_deptoscol', 'n')
+  ->fields('n', array('id_depto', 'depto_name', 'cap_depto', 'poblacion', 'uid2'))
+  ->condition('id_depto', $id_depto, '=')
+  ->execute()
+  ->fetchObject();
+
+  /* $file_image = file_load($query->uid2);
+  $imagen = theme('image', array('path' => $file_image->uri, 'height' => 200)); */
+  if ($query == '') {
+    form_set_error('depto_name', t('El registro no existe'));
+  }
+  else {
+    /* $form['picture'] = array(
+      '#title' => t('Departamentos de Colombia'),
+      '#markup' =>  $imagen ,
+    ); */
     $form['name']['picture2'] = array(
       '#title' => t('Codigo Departamento'),
       '#type' => 'textfield',
