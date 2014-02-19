@@ -1,0 +1,12 @@
+#edit-content {
+  width: 600px;
+  height: 300px;
+}
+
+#edit-left {
+  float: left;
+}
+
+#edit-right {
+  float: right;
+}

@@ -85,9 +85,9 @@ function formulario_block_info() {
     'region' => 'sidebar_first',
     'weight' => 0,
     'visibility' => BLOCK_VISIBILITY_LISTED,
-    //'pages' => 'formulario/ver',
+    'pages' => 'formulario/ver/*',
   );
-return $blocks;
+  return $blocks;
 }
 
 /**
@@ -104,6 +104,36 @@ function formulario_block_view($delta = '') {
   }
   return $block;
 }
+
+/**
+ * Implements hook_image_default_styles().
+ */
+function formulario_image_default_styles() {
+  $styles = array();
+
+  $styles['mymodule_preview'] = array(
+    'label' => 'My module preview',
+    'effects' => array(
+      array(
+        'name' => 'image_scale',
+        'data' => array(
+          'width' => 400,
+          'height' => 400,
+          'upscale' => 1,
+        ),
+        'weight' => 0,
+      ),
+      array(
+        'name' => 'image_desaturate',
+        'data' => array(),
+        'weight' => 1,
+      ),
+    ),
+  );
+
+  return $styles;
+}
+
 /**
  * Implementa la tabla que muestra los registros.
  */
@@ -236,6 +266,8 @@ function formulario_nameform_submit($form, &$form_state) {
   $capital = $form_state['values']['name_cap'];
   $pobla = $form_state['values']['poblacion'];
   $uid2 = $form_state['values']['file'];
+
+  dpm($uid2, 'uid2');
 /**
   *  Guardamos la imagen con status
   */
@@ -243,8 +275,18 @@ function formulario_nameform_submit($form, &$form_state) {
   $retor = file_load($uid2);
   $retor->status = FILE_STATUS_PERMANENT;
   file_save($retor);
+
+
+ /*$image_2 = image_style_url('mymodule_preview', $uid2->uri);
+ dpm($image_2, 'image_2');
+  $retor2 = file_load($image_2);
+  $retor2->status = FILE_STATUS_PERMANENT;
+  file_save($retor2);*/
+
   drupal_set_message(t('formulario diligenciado, %id, %depto, %capital, %poblacion',
     array('%id' => $id, '%depto' => $depto, '%capital' => $capital, '%poblacion' => $pobla, '%uid2' => $uid2)));
+
+
 /**
   * Inserat los datos en la DB.
   */
@@ -259,6 +301,7 @@ function formulario_nameform_submit($form, &$form_state) {
   ->execute();
   drupal_set_message(t('registro guradado!'));
 }
+
 /**
   * Validate Departamento exist.
   */
@@ -288,31 +331,31 @@ function formulario_edit_nameform($form, &$form_state, $id_depto) {
     form_set_error('depto_name', t('El registro no existe'));
   }
   else{
-    $form['name'] = array(
+    $form['wrapper'] = array(
       '#title' => t('Departamentos de Colombia'),
       '#type' => 'fieldset',
       '#description' => t('Los campos con * son obligatorios'),
     );
-    $form['name']['id_depto'] = array(
+    $form['wrapper']['id_depto'] = array(
       '#type' => 'value',
       '#value' => $query->id_depto,
       '#default_value' => $query->id_depto,
     );
-    $form['name']['depto_name'] = array(
+    $form['wrapper']['depto_name'] = array(
       '#title' => t('Nombre Departamento'),
       '#type' => 'textfield',
       '#default_value' => $query->depto_name,
       '#description' => t('Ingrese su Apellido'),
       '#required' => TRUE,
     );
-    $form['name']['name_cap'] = array(
+    $form['wrapper']['name_cap'] = array(
       '#title' => t('Capital'),
       '#type' => 'textfield',
       '#default_value' => $query->cap_depto,
       '#description' => t('Capital'),
       '#required' => TRUE,
     );
-    $form['name']['poblacion'] = array(
+    $form['wrapper']['poblacion'] = array(
       '#title' => t('poblacion'),
       '#type' => 'textfield',
       '#default_value' => $query->poblacion,
@@ -507,6 +550,8 @@ function mytable_table_consulta_data($form, &$form_state) {
   * Load Imagen en el formulario de consulta
   */
 function formulario_imagen_nameform($id_depto) {
+  //dpm(menu_get_item(), 'param');
+
   dpm($id_depto, 'id');
   $query = db_select('crud_deptoscol', 'n')
   ->fields('n', array('id_depto', 'depto_name', 'cap_depto', 'poblacion', 'uid2'))
@@ -514,8 +559,12 @@ function formulario_imagen_nameform($id_depto) {
   ->execute()
   ->fetchObject();
 
+
   $file_image = file_load($query->uid2);
-  $imagen = theme('image', array('path' => $file_image->uri, 'height' => 200));
+  $image_2 = image_style_url('mymodule_preview', $file_image->uri);
+  //$imagen = theme('image', array('path' => $file_image->uri, 'height' => 200));
+  $imagen=theme($image_2);
+  dpm($image_2, 'image_2');
   if ($query == '') {
     form_set_error('depto_name', t('El registro no existe'));
   }
@@ -539,56 +588,67 @@ function formulario_ver_nameform($form, &$form_state, $id_depto) {
   ->execute()
   ->fetchObject();
 
-  /* $file_image = file_load($query->uid2);
-  $imagen = theme('image', array('path' => $file_image->uri, 'height' => 200)); */
   if ($query == '') {
     form_set_error('depto_name', t('El registro no existe'));
   }
   else {
-    /* $form['picture'] = array(
-      '#title' => t('Departamentos de Colombia'),
-      '#markup' =>  $imagen ,
-    ); */
-    $form['name']['picture2'] = array(
-      '#title' => t('Codigo Departamento'),
-      '#type' => 'textfield',
-      '#default_value' => $query->uid2,
-      '#disabled' => TRUE,
-      '#size' => 10,
-    );
-    $form['name'] = array(
+    drupal_add_css(drupal_get_path('module', 'formulario') . '/css/formulario.css');
+
+    $file_image = file_load($query->uid2);
+    $imagen = theme('image_style', array('path' => $file_image->uri, 'style_name' => 'mymodule_preview'));
+
+    $form['wrapper'] = array(
       '#title' => t('Departamentos de Colombia'),
       '#type' => 'fieldset',
     );
-    $form['name']['id_depto'] = array(
+
+    $form['wrapper']['content'] = array(
+      '#type' => 'container',
+    );
+
+    $form['wrapper']['content']['left'] = array(
+      '#type' => 'container',
+    );
+
+    $form['wrapper']['content']['right'] = array(
+      '#type' => 'container',
+    );
+
+    $form['wrapper']['content']['right']['picture'] = array(
+      '#title' => t('Departamentos de Colombia'),
+      '#markup' =>  $imagen ,
+    );
+
+    $form['wrapper']['content']['left']['id_depto'] = array(
       '#title' => t('Codigo Departamento'),
       '#type' => 'textfield',
       '#default_value' => $query->id_depto,
       '#disabled' => TRUE,
       '#size' => 10,
     );
-    $form['name']['depto_name'] = array(
+    $form['wrapper']['content']['left']['depto_name'] = array(
       '#title' => t('Nombre Departamento'),
       '#type' => 'textfield',
       '#default_value' => $query->depto_name,
       '#disabled' => TRUE,
       '#size' => 30,
     );
-    $form['name']['name_cap'] = array(
+    $form['wrapper']['content']['left']['name_cap'] = array(
       '#title' => t('Capital'),
       '#type' => 'textfield',
       '#disabled' => TRUE,
       '#default_value' => $query->cap_depto,
       '#size' => 30,
     );
-    $form['name']['poblacion'] = array(
+    $form['wrapper']['content']['left']['poblacion'] = array(
       '#title' => t('Poblacion'),
       '#type' => 'textfield',
       '#default_value' => $query->poblacion,
       '#disabled' => TRUE,
       '#size' => 30,
     );
-    $form['name']['submit2'] = array(
+
+    $form['wrapper']['submit2'] = array(
       '#type' => 'submit',
       '#value' => t('Volver'),
       '#submit' => array('cancelar_del'),
@@ -655,11 +715,12 @@ function image_table_data() {
   $query = $query->extend('TableSort')->extend('PagerDefault')->limit(10);
   $result = $query->execute();
   $rows=array();
+
   while ($data = $result->fetchObject()) {
     $rows[] = array($data->fid, $data->uid, $data->filename,
       $data->uri, $data->filemime, $data->filesize,
       $data->status,
-      theme('image_style', array('style_name' => '300x300', 'path' => $data->uri)),
+      theme('image_style', array('article' => '300x300', 'path' => $data->uri)),
       l(t('Ver'), 'formulario/ver/' . $data->fid));
   }
   $output = theme_table(
