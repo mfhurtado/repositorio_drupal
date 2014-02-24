@@ -1,0 +1,44 @@
+<?php
+/**
+  * @file
+  * One-line description/summary of what your module does goes here.
+  *
+  * A paragraph or two in broad strokes about your module and how it behaves.
+  */
+function vistamodulo_schema() {
+  $schema['vistamodulo'] = array(
+    'fields' => array(
+      'nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => 0,
+        'description' => 'Node {vistamodulo}.nid.',
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => 0,
+        'description' => 'User {users}.uid.',
+      ),
+      'plai_text_field' => array(
+        'description' => 'Example textfield.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'timestamp_field' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Some timestamp.',
+      ),
+    ),
+    'primary key' => array('nid'),
+  );
+
+  return $schema;
+}

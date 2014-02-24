@@ -1,0 +1,9 @@
+name = Mydons Learn Views
+description = "Mydons module For learning views coding"
+package = Aprendiendo a programar con Drupal
+core=7.x
+version=VERSION
+dependencies[] = views
+files[] = mydons_learnviews.module
+files[] = mydons_learnviews.install
+files[] = views/mydons_learnviews.views.inc

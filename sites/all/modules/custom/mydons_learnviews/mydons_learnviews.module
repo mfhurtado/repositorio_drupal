@@ -1,0 +1,75 @@
+<?php
+/**
+ * @file
+ * Module file for mydons_lear
+ */
+
+/**
+ * Implements hook_views_data().
+ *
+ * Provide a menu item and a page to demonstrate features of this example
+ * module.
+ */
+function mydons_learnviews_views_api() {
+    return array(
+        'api' => '3',
+    );
+}
+/**
+  * function views data
+  */
+function mydons_learnviews_views_data() {
+  $table = array(
+    'mydons_customtable' => array(
+      'table' => array(
+        'group' => 'Mydons',
+        'base' => array(
+          'field' => 'mydons_custom_id',
+          'title' => 'Mydons Customtable',
+          'help' => 'Mydons Custom database table'
+          )
+        ),
+     'mydons_custom_id' => array(
+      'title' => t('Mydons Custom Id'),
+      'help' => t('Mydons Custom table  Id field'),
+      'field' => array(
+        'click sortable' => TRUE,
+        ),
+      'filter' => array(
+        'handler' => 'views_handler_filter_numeric'
+        ),
+      'sort' => array(
+        'handler' => 'views_handler_sort'
+        )
+      ),
+     'mydons_custom_title' => array(
+      'title' => t('Mydons Custom Title'),
+      'help' => t('Mydons Custom table  Title field'),
+      'field' => array(
+        'click sortable' => TRUE,
+        ),
+      'filter' => array(
+        'handler' => 'views_handler_filter_string'
+        ),
+      'sort' => array(
+        'handler' => 'views_handler_sort'
+        )
+      ),
+     'mydons_custom_body' => array(
+      'title' => t('Mydons Custom Body'),
+      'help' => t('Mydons Custom table Body field'),
+      'field' => array(
+        'click sortable' => TRUE,
+        ),
+      'filter' => array(
+        'handler' => 'views_handler_filter_string'
+        ),
+      'sort' => array(
+        'handler' => 'views_handler_sort'
+        )
+      ),
+      )
+);
+return $table;
+}
+

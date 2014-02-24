@@ -1,0 +1,5 @@
+name = Formulario Vista Módulo WW
+description = "Módulo Formulario Vista"
+package = Aprendiendo a programar con Drupal
+core = 7.x
+files[] = vistamodulo.module

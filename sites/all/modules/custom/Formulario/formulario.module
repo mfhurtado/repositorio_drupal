@@ -276,13 +276,6 @@ function formulario_nameform_submit($form, &$form_state) {
   $retor->status = FILE_STATUS_PERMANENT;
   file_save($retor);
 
-
- /*$image_2 = image_style_url('mymodule_preview', $uid2->uri);
- dpm($image_2, 'image_2');
-  $retor2 = file_load($image_2);
-  $retor2->status = FILE_STATUS_PERMANENT;
-  file_save($retor2);*/
-
   drupal_set_message(t('formulario diligenciado, %id, %depto, %capital, %poblacion',
     array('%id' => $id, '%depto' => $depto, '%capital' => $capital, '%poblacion' => $pobla, '%uid2' => $uid2)));
 

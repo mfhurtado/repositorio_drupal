@@ -1,0 +1,34 @@
+<?php
+/**
+  * @file
+  * One-line description/summary of what your module does goes here.
+  *
+  * A paragraph or two in broad strokes about your module and how it behaves.
+  */
+function mydons_learnviews_schema() {
+    $schema['mydons_customtable']=array(
+        'description' => 'Mydons Custom DB table',
+        'fields' => array(
+        'mydons_custom_id' => array(
+            'type' => 'serial',
+            'description' => 'Mydons Custom DB table Id field'
+            ),
+        'mydons_custom_title' => array(
+            'type' => 'varchar',
+            'length' => '24',
+            'description' => 'Mydons Custom DB table Title field'
+            ),
+        'mydons_custom_body' => array(
+            'type' => 'varchar',
+            'length' => '250',
+            'description' => 'Mydons Custom DB table Body field'
+            ),
+        ),
+        'primary key' => array('mydons_custom_id'),
+        'indexes' => array(
+            'mydons_custom_id' => array('mydons_custom_id'),
+            'mydons_custom_title' => array('mydons_custom_title')
+            )
+        );
+    return $schema;
+}
