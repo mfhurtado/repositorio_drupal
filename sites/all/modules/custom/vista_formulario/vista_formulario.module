@@ -1,0 +1,101 @@
+<?php
+/**
+ * @file
+ * Module file for mydons_lear
+ */
+
+/**
+ * Implements hook_views_data().
+ *
+ * Provide a menu item and a page to demonstrate features of this example
+ * module.
+ */
+function vista_formulario_views_api() {
+    return array(
+        'api' => '3',
+    );
+}
+/**
+  * function views data
+  */
+function vista_formulario_views_data() {
+  $table = array(
+    'crud_deptoscol' => array(
+      'table' => array(
+        'group' => 'DEPTOS',
+        'base' => array(
+          'field' => 'id_depto',
+          'title' => 'Departamentos',
+          'help' => 'Crud_deptoscol database table'
+          )
+        ),
+     'id_depto' => array(
+      'title' => t('Departamentos Id'),
+      'help' => t('crud_deptoscol table  Id field'),
+      'field' => array(
+        'click sortable' => TRUE,
+        ),
+      'filter' => array(
+        'handler' => 'views_handler_filter_numeric'
+        ),
+      'sort' => array(
+        'handler' => 'views_handler_sort'
+        )
+      ),
+     'depto_name' => array(
+      'title' => t('Departamentos name'),
+      'help' => t('crud_deptoscol table  depto_name field'),
+      'field' => array(
+        'click sortable' => TRUE,
+        ),
+      'filter' => array(
+        'handler' => 'views_handler_filter_string'
+        ),
+      'sort' => array(
+        'handler' => 'views_handler_sort'
+        )
+      ),
+     'cap_depto' => array(
+      'title' => t('Departamentos capital'),
+      'help' => t('crud_deptoscol table cap_depto field'),
+      'field' => array(
+        'click sortable' => TRUE,
+        ),
+      'filter' => array(
+        'handler' => 'views_handler_filter_string'
+        ),
+      'sort' => array(
+        'handler' => 'views_handler_sort'
+        )
+      ),
+     'poblacion' => array(
+      'title' => t('Departamentos poblacion'),
+      'help' => t('crud_deptoscol table  poblacion field'),
+      'field' => array(
+        'click sortable' => TRUE,
+        ),
+      'filter' => array(
+        'handler' => 'views_handler_filter_numeric'
+        ),
+      'sort' => array(
+        'handler' => 'views_handler_sort'
+        )
+      ),
+     'uid2' => array(
+      'title' => t('Departamentos uid2'),
+      'help' => t('crud_deptoscol table  uid2 field'),
+      'field' => array(
+        'click sortable' => TRUE,
+        ),
+      'filter' => array(
+        'handler' => 'views_handler_filter_numeric'
+        ),
+      'sort' => array(
+        'handler' => 'views_handler_sort'
+        )
+      ),
+      )
+);
+return $table;
+}
+

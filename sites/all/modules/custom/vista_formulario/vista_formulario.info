@@ -1,0 +1,7 @@
+name = Vista Formulario
+description = "Permite ver los  registros de la tabla crud_deptoscol"
+package = Aprendiendo a programar con Drupal
+core=7.x
+version=VERSION
+dependencies[] = views
+files[] = vista_formulario.module
